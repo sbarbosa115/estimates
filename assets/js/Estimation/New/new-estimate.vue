@@ -1,0 +1,320 @@
+<template>
+    <div class="row">
+        <form
+            @submit.prevent="submitHandler"
+            method="post"
+            class="w-100"
+        >
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label>Customer Name (*)</label>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        :class="{'is-invalid': $v.order.customer.name.$error}"
+                        v-model.trim="$v.order.customer.name.$model"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.customer.name.required">
+                        Field is required
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Date Order (*)</label>
+                    <datepicker
+                        v-model.trim="$v.order.date.$model"
+                        :class="{'is-invalid': $v.order.date.$error}"
+                        input-class="form-control form-control-sm"
+                    ></datepicker>
+                    <div class="invalid-feedback" v-if="!$v.order.date.required">
+                        Field is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label>Phone (*)</label>
+                    <input
+                        type="tel"
+                        v-model.trim="$v.order.customer.phone.$model"
+                        :class="{'is-invalid': $v.order.customer.phone.$error}"
+                        class="form-control form-control-sm"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.customer.phone.required">
+                        Field is required
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Email (*)</label>
+                    <input
+                        type="email"
+                        class="form-control form-control-sm"
+                        v-model.trim="$v.order.customer.email.$model"
+                        :class="{'is-invalid': $v.order.customer.email.$error}"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.customer.email.required">
+                        Field is required
+                    </div>
+                    <div class="invalid-feedback" v-if="!$v.order.customer.email.email">
+                        Field requires a valid email
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <label>Address</label>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        v-model="order.customer.address"
+                    >
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <h6 style="width: 100%"></h6>
+                </div>
+                <div class="col-sm-5">
+                    <h6 class="mb-0">Description</h6>
+                </div>
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Qty</h6>
+                </div>
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Rate</h6>
+                </div>
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Amount</h6>
+                </div>
+            </div>
+
+            <hr>
+
+            <container v-for="(detail, detailKey) in $v.order.detail.$each.$iter">
+                <detail-row
+                    :key="detail.id"
+                    :detail="detail"
+                    :detailKey="Number(detailKey)"
+                    @addDetailRow="addDetailRow"
+                    @deleteDescriptionRow="deleteDescriptionRow"
+                ></detail-row>
+            </container>
+
+            <hr>
+
+            <div class="form-group row justify-content-end">
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Subtotal</h6>
+                </div>
+                <div class="col-sm-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        :value="getSubTotal()"
+                        readonly
+                    >
+                </div>
+            </div>
+
+            <div class="form-group row justify-content-end">
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Deposit</h6>
+                </div>
+                <div class="col-sm-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        v-model.trim="$v.order.deposit.$model"
+                        :class="{'is-invalid': $v.order.deposit.$error}"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.deposit.required">
+                        Field is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row justify-content-end">
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Extras</h6>
+                </div>
+                <div class="col-sm-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        v-model.trim="$v.order.extra.$model"
+                        :class="{'is-invalid': $v.order.extra.$error}"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.extra.required">
+                        Field is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row justify-content-end">
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Total</h6>
+                </div>
+                <div class="col-sm-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        :value="getTotal()"
+                        readonly
+                    >
+                </div>
+            </div>
+
+            <div class="form-group row justify-content-end">
+                <div class="col-sm-2">
+                    <h6 class="mb-0">Balance Due</h6>
+                </div>
+                <div class="col-sm-2">
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        :value="getBalanceDue()"
+                        readonly
+                    >
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-block"
+                    >
+                        Sent
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</template>
+
+<script>
+  import uuid from 'uuid/v4';
+  import _ from 'lodash';
+  import axios from 'axios';
+  import Datepicker from 'vuejs-datepicker';
+  import DetailRow from './detail-row';
+  import { required, email, numeric } from 'vuelidate/lib/validators';
+
+  const detailOrderModel = {
+    id: uuid(),
+    description: null,
+    quantity: 0,
+    rate: 0,
+    amount: 0
+  };
+
+  const orderModel = {
+    id: uuid(),
+    date: null,
+    deposit: 0,
+    extra: 0,
+    customer: {
+      name: null,
+      email: null,
+      phone: null,
+      address: null,
+    },
+    detail: [
+      _.clone(detailOrderModel)
+    ]
+  };
+
+   export default {
+     props: {
+       pdfRoute: {
+         type: String
+       },
+     },
+     components: {
+       Datepicker, DetailRow,
+     },
+     data() {
+       return {
+         order: orderModel,
+       }
+     },
+     methods: {
+       addDetailRow() {
+         const detailOrder = _.clone(detailOrderModel);
+         detailOrder.id = uuid();
+         this.order.detail.push(detailOrder);
+       },
+       deleteDescriptionRow({ id }) {
+         this.order.detail = this.order.detail.filter(detail => detail.id !== id);
+       },
+       submitHandler() {
+         this.$v.$touch()
+         if (this.$v.$invalid === false) {
+            axios.post(window.location.href, this.order).then(response =>
+              window.location.href = `${this.pdfRoute}/pdf?id=${response.data.id}`
+            );
+         }
+       },
+       getSubTotal() {
+         return this.order.detail
+           .reduce((accumulator, detail) => Number(accumulator) + Number(detail.amount), 0);
+       },
+       getTotal() {
+         return Number(this.getSubTotal()) + Number(this.order.extra);
+       },
+       getBalanceDue() {
+         return Number(this.getTotal()) - Number(this.order.deposit);
+       }
+     },
+     validations: {
+       order: {
+         id: {
+           required
+         },
+         customer: {
+           name: {
+             required
+           },
+           email: {
+             required, email
+           },
+           phone: {
+             required
+           },
+         },
+         date: {
+           required
+         },
+         deposit: {
+           required, numeric
+         },
+         extra: {
+           required, numeric
+         },
+         detail: {
+           $each: {
+             description: {
+               required
+             },
+             quantity: {
+               required, numeric
+             },
+             rate: {
+               required
+             },
+             amount: {
+               required, numeric
+             }
+           }
+         }
+       }
+     }
+   }
+</script>

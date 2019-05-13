@@ -1,0 +1,43 @@
+{
+  "name": "Orders",
+  "version": "1.0.0",
+  "description": "Orders Management ",
+  "main": "index.js",
+  "repository": "git@github.com:sbarbosa115/orders.git",
+  "author": "Sergio Barbosa <sergio.barbosa@gograybox.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack -p",
+    "watch": "webpack -d --watch"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.3.1",
+    "install": "^0.12.2",
+    "lodash": "^4.17.11",
+    "path": "^0.12.7",
+    "uuid": "^3.3.2",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10",
+    "vuejs-datepicker": "^1.5.4",
+    "vuelidate": "^0.7.4"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.5.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^2.1.1",
+    "extract-loader": "^3.1.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^3.0.1",
+    "node-sass": "^4.12.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "vue-loader": "^15.7.0",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.2"
+  }
+}
