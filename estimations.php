@@ -14,13 +14,16 @@ use App\Services\EstimationService;
 require_once 'vendor/autoload.php';
 
 define( 'ESTIMATES_VERSION', '2.0' );
+define( 'BASE_WEBSITE_URL',  get_site_url(null, '/'));
+define( 'ROOT_PUBLIC_PLUGIN_URL',  get_site_url(null, '/estimates/'));
 define( 'ESTIMATES_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'ESTIMATES_PLUGIN_DIR_PUBLIC', plugins_url( 'estimations'));
-define( 'ESTIMATES_PLUGIN_ASSETS_PUBLIC', plugins_url( 'estimations/assets'));
-define( 'ESTIMATES_PLUGIN_BUILD_PUBLIC', plugins_url( 'estimations/public/dist'));
+define( 'ESTIMATES_PLUGIN_BUILD_PUBLIC', plugins_url( 'estimator/public/dist'));
 
 add_action('parse_request', 'plugin_route_handler');
 add_action( 'admin_menu', 'estimation_create_menu' );
+
+register_activation_hook( __FILE__, 'plugin_activation');
+//register_deactivation_hook( __FILE__, 'plugin_deactivation');
 
 /**
  * This function create all required database tables.
@@ -95,7 +98,7 @@ function sendmail(){
     if(get_option( 'estimates_to_email' )){
         wp_mail(array(get_option( 'estimates_to_email')), 'Estimates Created', 'Someone has created a new estimate.',
             $headers,
-            array(ESTIMATES_PLUGIN_DIR_PUBLIC  . '/pdf?id=' . $wpdb->insert_id));
+            array(BASE_WEBSITE_URL  . 'estimator/pdf?id=' . $wpdb->insert_id));
     }
 }
 

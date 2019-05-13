@@ -16,7 +16,7 @@ class Controller
             'cache' => false,
         ]);
         $this->twig->addGlobal('ESTIMATES_PLUGIN_BUILD_PUBLIC', ESTIMATES_PLUGIN_BUILD_PUBLIC);
-        $this->twig->addGlobal('ESTIMATES_PLUGIN_DIR_PUBLIC', ESTIMATES_PLUGIN_DIR_PUBLIC);
+        $this->twig->addGlobal('ROOT_PUBLIC_PLUGIN_URL', ROOT_PUBLIC_PLUGIN_URL);
     }
 
 }
