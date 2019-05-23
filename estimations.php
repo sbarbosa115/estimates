@@ -20,15 +20,11 @@ define( 'ESTIMATES_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ESTIMATES_PLUGIN_BUILD_PUBLIC', plugins_url( 'estimator/public/dist'));
 
 add_action('parse_request', 'plugin_route_handler');
-add_action( 'admin_menu', 'estimation_create_menu' );
+add_action('admin_menu', 'estimates_create_menu' );
 
 register_activation_hook( __FILE__, 'plugin_activation');
-//register_deactivation_hook( __FILE__, 'plugin_deactivation');
+register_deactivation_hook( __FILE__, 'plugin_deactivation');
 
-/**
- * This function create all required database tables.
- * @author Sergio Barbosa <sbarbosa115@gmail.com>
- */
 function plugin_activation() {
     global $wpdb;
 
@@ -46,10 +42,7 @@ function plugin_activation() {
     dbDelta($sql);
 }
 
-/**
- * This function remove all database tables.
- * @author Sergio Barbosa <sbarbosa115@gmail.com>
- */
+
 function plugin_deactivation() {
     global $wpdb;
 
@@ -63,10 +56,17 @@ function plugin_deactivation() {
 function plugin_route_handler() {
     global $wpdb;
 
-    if($_SERVER['REQUEST_URI'] === '/estimates/new') {
+    if(strpos($_SERVER['REQUEST_URI'], 'estimates/new')) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data =  json_decode(file_get_contents('php://input'), true);
-            echo (new EstimationController())->save($data);
+            $preview = $_GET['preview'];
+            if ($preview === 'true') {
+                (new EstimationController())->pdf($data);
+            } else {
+                echo (new EstimationController())->save($data);
+            }
+
+
         } else {
             echo (new EstimationController())->new();
         }
@@ -80,11 +80,6 @@ function plugin_route_handler() {
     }
 }
 
-
-/**
- * This function send the email with attached pdf.
- * @author Sergio Barbosa <sbarbosa115@gmail.com>
- */
 function sendmail(){
 
     global $wpdb;
@@ -102,19 +97,14 @@ function sendmail(){
     }
 }
 
-/**
- * Enable the main menu option
- */
 function estimates_create_menu() {
     add_options_page( 'Estimates', 'Create Estimate', 'manage_options', 'create-new-estimate', 'estimate_options' );
+    register_setting( 'estimates-settings', 'customer_name' );
     register_setting( 'estimates-settings', 'estimates_from_email' );
     register_setting( 'estimates-settings', 'estimates_to_email' );
     register_setting( 'estimates-settings', 'estimates_signature_space' );
 }
 
-/**
- * Enable the main menu option
- */
 function estimates_options() {
     if (!current_user_can('manage_options'))  {
         wp_die(__( 'You do not have sufficient permissions to access this page.'));

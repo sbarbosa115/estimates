@@ -21,7 +21,6 @@ class EstimationController extends Controller
 
     public function pdf(array $estimation)
     {
-
         $html = $this->twig->render('estimation/pdf.twig', [
             'estimation' => $estimation
         ]);
@@ -30,7 +29,7 @@ class EstimationController extends Controller
         $dompdf->loadHtml($html);
         $dompdf->setPaper('letter');
         $dompdf->render();
-        $dompdf->stream();
+        $dompdf->stream($estimation['formType'].'-'.$estimation['id'].'.pdf');
     }
 
 }

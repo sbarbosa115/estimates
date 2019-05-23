@@ -6,11 +6,6 @@
             width: 700px;
             margin: 0 auto;
         }
-        .center-justified {
-            text-align: justify;
-            margin: 0 auto;
-            width: 30em;
-        }
         table.outline-table {
             border: 1px solid;
             border-spacing: 0;
@@ -52,7 +47,7 @@
             <tbody>
                 <tr>
                     <td width="100%">
-                        <h2>Estimation</h2><br>
+                        <h2>{{ estimation.formType|upper}}</h2><br>
                         <strong>Customer Name:</strong> {{ estimation.customer.name |capitalize}}<br>
                         <strong>Estimation Date:</strong> {{ estimation.date|date("Y-m-d") }}<br>
                         <strong>Customer Phone:</strong> {{ estimation.customer.phone |capitalize}}<br>
@@ -93,10 +88,14 @@
         <table width="100%" class="outline-table">
             <tbody>
                 <tr class="border-bottom border-right grey">
-                    <td colspan="3"><strong>Summary</strong></td>
+                    <td colspan="3">
+                        <strong>Summary</strong>
+                    </td>
                 </tr>
                 <tr class="border-right">
-                    <td class="pad-left" width="60%">&nbsp;</td>
+                    <td class="pad-left" width="60%">
+                        {{ estimation.description }}
+                    </td>
                     <td class="right border-top">Subtotal</td>
                     <td class="right border-top">$ {{ subTotal|number_format(2, '.', ',') }}</td>
                 </tr>

@@ -7,14 +7,17 @@
         >
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <label>Customer Name (*)</label>
-                    <input
-                        type="text"
+                    <label>Form Type</label>
+
+                    <select
                         class="form-control form-control-sm"
-                        :class="{'is-invalid': $v.order.customer.name.$error}"
-                        v-model.trim="$v.order.customer.name.$model"
+                        :class="{'is-invalid': $v.order.formType.$error}"
+                        v-model.trim="$v.order.formType.$model"
                     >
-                    <div class="invalid-feedback" v-if="!$v.order.customer.name.required">
+                        <option value="invoice">Invoice</option>
+                        <option value="estimate">Estimate</option>
+                    </select>
+                    <div class="invalid-feedback" v-if="!$v.order.formType.required">
                         Field is required
                     </div>
                 </div>
@@ -33,6 +36,18 @@
 
             <div class="form-group row">
                 <div class="col-sm-6">
+                    <label>Customer Name (*)</label>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        :class="{'is-invalid': $v.order.customer.name.$error}"
+                        v-model.trim="$v.order.customer.name.$model"
+                    >
+                    <div class="invalid-feedback" v-if="!$v.order.customer.name.required">
+                        Field is required
+                    </div>
+                </div>
+                <div class="col-sm-6">
                     <label>Phone (*)</label>
                     <input
                         type="tel"
@@ -44,6 +59,9 @@
                         Field is required
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group row">
                 <div class="col-sm-6">
                     <label>Email (*)</label>
                     <input
@@ -59,10 +77,7 @@
                         Field requires a valid email
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <label>Address</label>
                     <input
                         type="text"
@@ -94,7 +109,7 @@
 
             <hr>
 
-            <container v-for="(detail, detailKey) in $v.order.detail.$each.$iter">
+            <container v-for="(detail, detailKey) in $v.order.detail.$each.$iter" :key="detail.id">
                 <detail-row
                     :key="detail.id"
                     :detail="detail"
@@ -106,84 +121,89 @@
 
             <hr>
 
-            <div class="form-group row justify-content-end">
-                <div class="col-sm-2">
-                    <h6 class="mb-0">Subtotal</h6>
-                </div>
-                <div class="col-sm-2">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        :value="getSubTotal()"
-                        readonly
-                    >
-                </div>
-            </div>
+            <div class="form-row">
 
-            <div class="form-group row justify-content-end">
-                <div class="col-sm-2">
-                    <h6 class="mb-0">Deposit</h6>
+                <div class="form-group col-md-9">
+                    <h6 class="mb-0">Notes</h6>
+                    <textarea
+                        class="form-control"
+                        placeholder="Notes..."
+                        v-model.trim="$v.order.description.$model"
+                    ></textarea>
                 </div>
-                <div class="col-sm-2">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        v-model.trim="$v.order.deposit.$model"
-                        :class="{'is-invalid': $v.order.deposit.$error}"
-                    >
-                    <div class="invalid-feedback" v-if="!$v.order.deposit.required">
-                        Field is required
+                <div class="form-group col-md-3">
+                    <div class="form-group">
+                        <h6 class="mb-0">Subtotal</h6>
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            :value="getSubTotal()"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <h6 class="mb-0">Deposit</h6>
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            v-model.trim="$v.order.deposit.$model"
+                            :class="{'is-invalid': $v.order.deposit.$error}"
+                        >
+                        <div class="invalid-feedback" v-if="!$v.order.deposit.required">
+                            Field is required
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h6 class="mb-0">Extras</h6>
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            v-model.trim="$v.order.extra.$model"
+                            :class="{'is-invalid': $v.order.extra.$error}"
+                        >
+                        <div class="invalid-feedback" v-if="!$v.order.extra.required">
+                            Field is required
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h6 class="mb-0">Total</h6>
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            :value="getTotal()"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <h6 class="mb-0">Balance Due</h6>
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            :value="getBalanceDue()"
+                            readonly
+                        >
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group row justify-content-end">
-                <div class="col-sm-2">
-                    <h6 class="mb-0">Extras</h6>
-                </div>
-                <div class="col-sm-2">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        v-model.trim="$v.order.extra.$model"
-                        :class="{'is-invalid': $v.order.extra.$error}"
-                    >
-                    <div class="invalid-feedback" v-if="!$v.order.extra.required">
-                        Field is required
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group row justify-content-end">
-                <div class="col-sm-2">
-                    <h6 class="mb-0">Total</h6>
-                </div>
-                <div class="col-sm-2">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        :value="getTotal()"
-                        readonly
-                    >
-                </div>
-            </div>
-
-            <div class="form-group row justify-content-end">
-                <div class="col-sm-2">
-                    <h6 class="mb-0">Balance Due</h6>
-                </div>
-                <div class="col-sm-2">
-                    <input
-                        type="text"
-                        class="form-control form-control-sm"
-                        :value="getBalanceDue()"
-                        readonly
-                    >
-                </div>
             </div>
 
             <hr>
 
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <button
+                        type="button"
+                        class="btn btn-success btn-block"
+                        v-on:click="submitPreview"
+                    >
+                        Preview
+                    </button>
+                </div>
+            </div>
             <div class="form-group row">
                 <div class="col-sm-12">
                     <button
@@ -220,6 +240,8 @@
     date: null,
     deposit: 0,
     extra: 0,
+    formType: null,
+    description: '',
     customer: {
       name: null,
       email: null,
@@ -262,6 +284,25 @@
             );
          }
        },
+       submitPreview() {
+         this.$v.$touch()
+         if (this.$v.$invalid === false) {
+           axios.post(window.location.href + '?preview=true', this.order, {
+             responseType: 'arraybuffer',
+             headers: {
+               'Content-Type': 'application/json',
+               'Accept': 'application/pdf'
+             }
+           }).then((response) => {
+             const url = window.URL.createObjectURL(new Blob([response.data]));
+             const link = document.createElement('a');
+             link.href = url;
+             link.setAttribute('download', 'preview.pdf'); //or any other extension
+             document.body.appendChild(link);
+             link.click();
+           });
+         }
+       },
        getSubTotal() {
          return this.order.detail
            .reduce((accumulator, detail) => Number(accumulator) + Number(detail.amount), 0);
@@ -288,6 +329,10 @@
            phone: {
              required
            },
+         },
+         description: {},
+         formType: {
+           required
          },
          date: {
            required

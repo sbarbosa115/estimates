@@ -40,6 +40,12 @@ class EstimationService
                 new Assert\NotBlank(),
                 new Assert\Type(['type' => 'numeric']),
             ],
+            'formType' => [
+                new Assert\NotBlank(),
+            ],
+            'description' => [
+                new Assert\Optional(),
+            ],
             'deposit' => [
                 new Assert\NotBlank(),
                 new Assert\Type(['type' => 'numeric']),
