@@ -65,8 +65,6 @@ function plugin_route_handler() {
             } else {
                 echo (new EstimationController())->save($data);
             }
-
-
         } else {
             echo (new EstimationController())->new();
         }
@@ -81,8 +79,8 @@ function plugin_route_handler() {
 }
 
 function sendmail(){
-
     global $wpdb;
+
     if(get_option( 'estimates_from_email' )) {
         $domain = get_option( 'estimates_from_email' );
         $headers = array("From: Notifications <{$domain}>;");
@@ -97,18 +95,25 @@ function sendmail(){
     }
 }
 
+
 function estimates_create_menu() {
+
     add_options_page( 'Estimates', 'Create Estimate', 'manage_options', 'create-new-estimate', 'estimate_options' );
+    register_setting( 'estimates-settings', 'customer_logo' );
     register_setting( 'estimates-settings', 'customer_name' );
+    register_setting( 'estimates-settings', 'customer_email' );
+    register_setting( 'estimates-settings', 'customer_phone' );
     register_setting( 'estimates-settings', 'estimates_from_email' );
     register_setting( 'estimates-settings', 'estimates_to_email' );
-    register_setting( 'estimates-settings', 'estimates_signature_space' );
+    register_setting( 'estimates-settings', 'estimate_bottom_copy' );
 }
 
-function estimates_options() {
+function estimate_options() {
     if (!current_user_can('manage_options'))  {
         wp_die(__( 'You do not have sufficient permissions to access this page.'));
     }
+
+    wp_enqueue_script('estimations-admin',plugins_url( 'estimator/assets/js/admin').'/admin.js', ['jquery']);
 
     include 'templates/configuration.php';
 }

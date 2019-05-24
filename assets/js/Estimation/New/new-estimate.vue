@@ -197,7 +197,7 @@
                 <div class="col-sm-12">
                     <button
                         type="button"
-                        class="btn btn-success btn-block"
+                        class="btn btn-info btn-block"
                         v-on:click="submitPreview"
                     >
                         Preview

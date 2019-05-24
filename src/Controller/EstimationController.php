@@ -25,7 +25,7 @@ class EstimationController extends Controller
             'estimation' => $estimation
         ]);
 
-        $dompdf = new Dompdf();
+        $dompdf = new Dompdf(['enable_remote' => true]);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('letter');
         $dompdf->render();

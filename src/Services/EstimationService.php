@@ -16,7 +16,7 @@ class EstimationService
     public function __construct($wpdb)
     {
         $this->wpdb = $wpdb;
-        $this->tablePrefix = $this->wpdb->prefix . 'orders';
+        $this->tablePrefix = $this->wpdb->prefix . 'estimates';
     }
 
     public function validation(array $estimateData): ConstraintViolationListInterface
