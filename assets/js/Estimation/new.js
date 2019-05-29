@@ -13,11 +13,14 @@ Vue.component('estimate', {
     pdfRoute: {
       type: String
     },
+    products: {
+      type: String
+    },
   },
   components: {
     NewEstimate,
   },
-  template: '<new-estimate :pdf-route="pdfRoute"></new-estimate>',
+  template: '<new-estimate :pdf-route="pdfRoute" :products="products"></new-estimate>',
 });
 
 Vue.use(Vuelidate);

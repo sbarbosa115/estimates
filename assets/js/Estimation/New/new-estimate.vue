@@ -93,10 +93,16 @@
                 <div class="col-sm-1">
                     <h6 style="width: 100%"></h6>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-4" v-if="getProducts().length > 0">
                     <h6 class="mb-0">Description</h6>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-6" v-if="getProducts().length === 0">
+                    <h6 class="mb-0">Description</h6>
+                </div>
+                <div class="col-sm-2" v-if="getProducts().length > 0">
+                    <h6 class="mb-0">Products</h6>
+                </div>
+                <div class="col-sm-1">
                     <h6 class="mb-0">Qty</h6>
                 </div>
                 <div class="col-sm-2">
@@ -113,6 +119,7 @@
                 <detail-row
                     :key="detail.id"
                     :detail="detail"
+                    :products="getProducts()"
                     :detailKey="Number(detailKey)"
                     @addDetailRow="addDetailRow"
                     @deleteDescriptionRow="deleteDescriptionRow"
@@ -196,6 +203,7 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <button
+                        :disabled="this.sending"
                         type="button"
                         class="btn btn-info btn-block"
                         v-on:click="submitPreview"
@@ -207,10 +215,11 @@
             <div class="form-group row">
                 <div class="col-sm-12">
                     <button
+                        :disabled="this.sending"
                         type="submit"
                         class="btn btn-success btn-block"
                     >
-                        Sent
+                        Save
                     </button>
                 </div>
             </div>
@@ -230,6 +239,7 @@
   const detailOrderModel = {
     id: uuid(),
     description: null,
+    product: null,
     quantity: 0,
     rate: 0,
     amount: 0
@@ -237,7 +247,7 @@
 
   const orderModel = {
     id: uuid(),
-    date: null,
+    date: new Date(),
     deposit: 0,
     extra: 0,
     formType: null,
@@ -249,7 +259,7 @@
       address: null,
     },
     detail: [
-      _.clone(detailOrderModel)
+      detailOrderModel
     ]
   };
 
@@ -258,16 +268,28 @@
        pdfRoute: {
          type: String
        },
+       products: {
+         type: String
+       },
      },
      components: {
        Datepicker, DetailRow,
      },
      data() {
        return {
-         order: orderModel,
+         sending: false,
+         order: _.cloneDeep(orderModel),
        }
      },
      methods: {
+       getProducts() {
+         console.log(JSON.parse(this.products))
+         console.log(JSON.parse(this.products).length)
+         return JSON.parse(this.products);
+       },
+       toggleSending() {
+         this.sending = !this.sending;
+       },
        addDetailRow() {
          const detailOrder = _.clone(detailOrderModel);
          detailOrder.id = uuid();
@@ -276,17 +298,26 @@
        deleteDescriptionRow({ id }) {
          this.order.detail = this.order.detail.filter(detail => detail.id !== id);
        },
+       resetForm() {
+         this.order = _.cloneDeep(orderModel);
+         this.$v.order.$reset();
+       },
        submitHandler() {
-         this.$v.$touch()
+         this.$v.$touch();
          if (this.$v.$invalid === false) {
+           this.toggleSending();
             axios.post(window.location.href, this.order).then(response =>
               window.location.href = `${this.pdfRoute}/pdf?id=${response.data.id}`
-            );
+            ).then(() => (
+              this.toggleSending(),
+              this.resetForm()
+            ));
          }
        },
        submitPreview() {
          this.$v.$touch()
          if (this.$v.$invalid === false) {
+           this.toggleSending();
            axios.post(window.location.href + '?preview=true', this.order, {
              responseType: 'arraybuffer',
              headers: {
@@ -294,6 +325,7 @@
                'Accept': 'application/pdf'
              }
            }).then((response) => {
+             this.toggleSending();
              const url = window.URL.createObjectURL(new Blob([response.data]));
              const link = document.createElement('a');
              link.href = url;
@@ -345,6 +377,7 @@
          },
          detail: {
            $each: {
+             product: {},
              description: {
                required
              },

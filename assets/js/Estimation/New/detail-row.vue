@@ -17,7 +17,9 @@
                 X
             </button>
         </div>
-        <div class="col-sm-5">
+        <div
+            :class="products.length === 0 ? 'col-sm-6' : 'col-sm-4'"
+        >
             <input
                 type="text"
                 class="form-control form-control-sm"
@@ -28,7 +30,15 @@
                 Field is required
             </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2" v-if="products.length > 0">
+            <select
+                class="form-control form-control-sm"
+                v-model.trim="detailProduct.product.$model"
+            >
+                <option v-for="product in products">{{ product }}</option>
+            </select>
+        </div>
+        <div class="col-sm-1">
             <input
                 type="text"
                 class="form-control form-control-sm"
@@ -72,6 +82,9 @@
      props: {
        detail: {
          type: Object
+       },
+       products: {
+         type: Array
        },
        detailKey: {
          type: Number

@@ -57,6 +57,10 @@
                 <th scope="row">Copy to signature space:</th>
                 <td><textarea name="estimate_bottom_copy" style="width: 300px;"><?php echo get_option( 'estimate_bottom_copy' ); ?></textarea></td>
             </tr>
+            <tr valign="top">
+                <th scope="row">List of products separated by comma, e.g (Product 1,Product 2):</th>
+                <td><textarea name="estimate_products" style="width: 300px;"><?php echo get_option( 'estimate_products' ); ?></textarea></td>
+            </tr>
         </table>
         <?php submit_button('Save Options'); ?>
     </form>

@@ -106,6 +106,7 @@ function estimates_create_menu() {
     register_setting( 'estimates-settings', 'estimates_from_email' );
     register_setting( 'estimates-settings', 'estimates_to_email' );
     register_setting( 'estimates-settings', 'estimate_bottom_copy' );
+    register_setting( 'estimates-settings', 'estimate_products' );
 }
 
 function estimate_options() {
