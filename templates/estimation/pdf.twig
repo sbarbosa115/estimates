@@ -68,12 +68,18 @@
         <table width="100%" class="outline-table">
             <tbody>
                 <tr class="border-bottom border-right grey">
-                    <td colspan="4">
+                    <td colspan="5">
                         <strong>Estimation Detail</strong>
                     </td>
                 </tr>
                 <tr class="border-bottom border-right center">
-                    <td width="55%"><strong>Description</strong></td>
+                    {% if detail.product is defined %}
+                        <td width="30%"><strong>Description</strong></td>
+                        <td width="25%">Product</td>
+                    {% else %}
+                        <td width="55%"><strong>Description</strong></td>
+                    {% endif %}
+                    <td width="15%"><strong>Product</strong></td>
                     <td width="15%"><strong>Quantity</strong></td>
                     <td width="15%"><strong>Rate</strong></td>
                     <td width="15%"><strong>Amount</strong></td>
@@ -83,6 +89,9 @@
                 {% for detail in estimation.detail %}
                     <tr class="border-right">
                         <td class="pad-left">{{ detail.description }}</td>
+                        {% if detail.product is defined %}
+                            <td class="center">{{ detail.product }}</td>
+                        {% endif %}
                         <td class="center">{{ detail.quantity }}</td>
                         <td class="center">{{ detail.rate }}</td>
                         <td class="center">{{ detail.amount }}</td>

@@ -71,6 +71,9 @@ class EstimationService
                     'description' => [
                         new Assert\NotBlank(),
                     ],
+                    'product' => [
+                        new Assert\Optional(),
+                    ],
                     'quantity' => [
                         new Assert\NotBlank(),
                         new Assert\Type(['type' => 'numeric']),

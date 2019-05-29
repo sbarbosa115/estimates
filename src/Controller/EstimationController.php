@@ -9,7 +9,15 @@ class EstimationController extends Controller
 {
     public function new(): string
     {
-        return $this->twig->render('estimation/new.twig');
+        $products = [];
+        foreach(explode(',', get_option('estimate_products')) as $product) {
+            if($product) {
+                $products[] = ucwords(strtolower(trim($product)));
+            }
+        }
+        return $this->twig->render('estimation/new.twig', [
+            'products' => $products
+        ]);
     }
 
     public function save(array $data): string

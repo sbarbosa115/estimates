@@ -2,6 +2,9 @@
 
 {% block content %}
     <div id="app" class="container">
-        <estimate pdf-route="{{ ROOT_PUBLIC_PLUGIN_URL }}"></estimate>
+        <estimate
+            pdf-route="{{ ROOT_PUBLIC_PLUGIN_URL }}"
+            products="{{ products|json_encode }}"
+        ></estimate>
     </div>
 {% endblock %}
